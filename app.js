@@ -23,7 +23,10 @@ const ordersRouter = require('./routers/orders')
 const productsRouter = require('./routers/products')
 const usersRouter = require('./routers/users')
 
+app.use(`${api}/categories`, categoriesRouter)
+app.use(`${api}/orders`, ordersRouter)
 app.use(`${api}/products`, productsRouter)
+app.use(`${api}/users`, usersRouter)
 
 const Category = require('./models/category')
 const Order = require('./models/order')
@@ -45,6 +48,5 @@ mongoose
 // http://localhost/api/v1/products
 
 app.listen(3000, () => {
-    console.log(api)
     console.log('Server is running http://localhost:3000')
 })
