@@ -50,7 +50,7 @@ router.get('/get/count', async (req, res) => {
     if (!productCount) {
         return res.status(500).json({ success: false })
     }
-    return res.send('productCount: ', productCount)
+    return res.send({productCount: productCount})
 })
 
 router.get('/get/featured/:count', async (req, res) => {
