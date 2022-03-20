@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const res = require('express/lib/response')
+const authJwt = require('./helpers/jwt')
+const errorHandler = require('./helpers/error-handler')
 
 require('dotenv/config')
 
@@ -16,6 +18,7 @@ app.options('*', cors())
 // middleware
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
+app.use(authJwt())
 
 // Routers
 const categoriesRouter = require('./routers/categories')
@@ -27,6 +30,7 @@ app.use(`${api}/categories`, categoriesRouter)
 app.use(`${api}/orders`, ordersRouter)
 app.use(`${api}/products`, productsRouter)
 app.use(`${api}/users`, usersRouter)
+app.use(errorHandler)
 
 const Category = require('./models/category')
 const Order = require('./models/order')

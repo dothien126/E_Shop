@@ -34,12 +34,12 @@ const productSchema = mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
-        required: true
+        required: true,
     },
     countInStock: {
         type: Number,
         required: true,
-        min: 0
+        min: 0,
     },
     rating: {
         type: Number,
@@ -51,16 +51,16 @@ const productSchema = mongoose.Schema({
     },
     isFeatured: {
         type: Boolean,
-        default: false
+        default: false,
     },
 })
 
 productSchema.virtual('id').get(function () {
-    return this._id.toHexString
+    return this._id.toHexString()
 })
 
 productSchema.set('toJSON', {
-    virtuals: true
-}) 
-   
+    virtuals: true,
+})
+
 exports.Product = mongoose.model('Product', productSchema)

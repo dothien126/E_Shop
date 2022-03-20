@@ -3,15 +3,14 @@ const mongoose = require('mongoose')
 const categorySchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     icon: {
-        type: String
+        type: String,
     },
     color: {
-        type: String
-    }
+        type: String,
+    },
 })
 
 exports.Category = mongoose.model('Category', categorySchema)
-
