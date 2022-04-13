@@ -3,6 +3,18 @@ const { Category } = require('../models/category')
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+    destination: function(req, res, cb) {
+        cb(null, '/public/uploads')
+    },
+    filename: function(req, file, cb) {
+        const filename = file.originalname.aplit(' ').join('-')
+        cb(null, filename + '-' + Date.now())
+    }
+})
+const upload = multer({ storage: storage })
 
 router.delete('/:id', (req, res) => {
     Product.findByIdAndRemove(req.params.id)
