@@ -5,13 +5,28 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const multer = require('multer')
 
+const FILE_TYPE_MAP = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg',
+
+}
+
 const storage = multer.diskStorage({
     destination: function(req, res, cb) {
-        cb(null, '/public/uploads')
+        const isValid = FILE_TYPE_MAP[file.mimetype]
+        let uploadError = new Error('invalid image type')
+
+        if(isValid) {
+            uploadError = null
+        }
+        cb(uploadError, '/public/uploads')
     },
     filename: function(req, file, cb) {
+        
         const filename = file.originalname.aplit(' ').join('-')
-        cb(null, filename + '-' + Date.now())
+        const extension = FILE_TYPE_MAP[file.mimetype]
+        cb(null, `${filename}-${Date.now()}.${extension}`)
     }
 })
 const upload = multer({ storage: storage })
@@ -79,6 +94,11 @@ router.post('/', async (req, res) => {
     const category = await Category.findById(req.body.category)
     if (!category) return res.status(400).send('Invalid category')
 
+    const file = req.file
+    if (!file) return res.status(400).send('Invalid file')
+
+    const fileName = file.filename
+    const basePath = `${req.protocol}://${req.get('host')/public/upload}`
     let product = new Product({
         name: req.body.name,
         description: req.body.description,
@@ -124,6 +144,30 @@ router.put('/:id', async (req, res) => {
 
     if (!product)
         return res.status(404).send('The product cannot be created!')
+
+    return res.send(product)
+})
+
+router.put('/gallery-images:id', uploadOptions.array('images', 10), async (req, res) => {
+    
+    if(!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).send('Invalid product id')
+    }
+    const files = req.files
+    const basePath = `${req.protocol}://${req.get('host')/public/upload}`
+    if(files) {
+        files.map(file => {
+            imagesPaths.push(file.filename)
+        })
+    }
+
+    let imagesPaths = []
+    const product = await Product.findByIdAndUpdate(req.params.id, {
+        images: imagesPaths
+    }, {new: true})
+
+    if (!product)
+    return res.status(404).send('The product not found')
 
     return res.send(product)
 })
